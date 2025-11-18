@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sales Dashboard - November 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: #0f172a;
+            --bg-soft: #111827;
+            --bg-card: #020617;
+            --border-subtle: rgba(148, 163, 184, 0.3);
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.12);
+            --accent-strong: rgba(56, 189, 248, 0.3);
+            --text-main: #e5e7eb;
+            --text-soft: #9ca3af;
+            --text-muted: #6b7280;
+            --danger: #f97373;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --nl: #f59e0b;
+            --de: #4ade80;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: "Inter", system-ui;
+            background: radial-gradient(circle at top, #1d283a 0, #020617 45%, #020617 100%);
+            color: var(--text-main);
+        }
+        .page { max-width: 1400px; margin: 0 auto; }
+        .header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+        .title-block { display: flex; flex-direction: column; gap: 4px; }
+        .title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .title-pill {
+            font-size: 11px; padding: 2px 8px; border-radius: 999px;
+            border: 1px solid var(--accent-strong); background: rgba(15,23,42,0.3);
+            color: var(--accent); text-transform: uppercase;
+        }
+        .subtitle { font-size: 13px; color: var(--text-soft); }
+        .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; color: var(--text-muted); }
+        .meta-tag { padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.25); }
+        .exclusion-note { font-size: 12px; color: var(--warning); margin-top: 4px; }
+        .kpi-row {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            gap: 12px; margin-bottom: 18px;
+        }
+        @media (max-width:1300px) { .kpi-row { grid-template-columns: repeat(4,1fr); } }
+        @media (max-width:900px) { .kpi-row { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width:600px) { .kpi-row { grid-template-columns: 1fr; } }
+        .card {
+            background: radial-gradient(circle at top left, rgba(56,189,248,0.06), rgba(15,23,42,0.95));
+            border-radius: 14px; border: 1px solid var(--border-subtle);
+            padding: 12px 14px;
+        }
+        .card.nl { border-left: 4px solid var(--nl); }
+        .card.de { border-left: 4px solid var(--de); }
+        .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); }
+        .kpi-value { font-size: 16px; font-weight: 600; }
+        .kpi-sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+        .layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+            gap: 14px; margin-bottom: 16px;
+        }
+        .section-title { font-size: 13px; font-weight: 500; color: var(--text-soft); margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; }
+        .chart-wrapper {
+            border-radius: 14px; border: 1px solid var(--border-subtle);
+            background: rgba(15,23,42,0.95); padding: 10px; margin-bottom: 10px;
+        }
+        .table-wrapper { border-radius: 14px; border:1px solid var(--border-subtle); background: rgba(15,23,42,0.95); padding:10px; }
+        table { width:100%; border-collapse:collapse; font-size:11px; }
+        th,td { padding:6px 8px; border-bottom:1px solid rgba(31,41,55,0.9); }
+        tbody tr:nth-child(even) { background: rgba(15,23,42,0.75); }
+        tbody tr:hover { background: rgba(30,64,175,0.35); }
+        .badge-admin { padding:2px 8px; border-radius:999px; font-size:10px; }
+        .badge-admin.BV { border:1px solid rgba(56,189,248,0.7); color:#38bdf8; }
+        .badge-admin.GmbH { border:1px solid rgba(74,222,128,0.7); color:#4ade80; }
+        .badge-admin.SIP { border:1px solid rgba(248,250,252,0.4); color:#e5e7eb; }
+        .badge-admin.WLDG { border:1px solid rgba(249,115,22,0.7); color:#fb923c; }
+        .search-input {
+            border-radius: 999px; border: 1px solid rgba(148,163,184,0.4);
+            background:#020617; padding:6px 10px; font-size:12px; color:white;
+        }
+        .pill-filter-group { display:flex; gap:4px; flex-wrap:wrap; }
+        .pill-filter { font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid rgba(148,163,184,0.4); cursor:pointer; background:transparent; color:var(--text-soft); }
+        .pill-filter.active { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+        .country-flag { font-size:18px; margin-right:6px; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="title-block">
+            <div class="title">
+                <i class="fas fa-chart-line"></i> Sales Performance Dashboard
+                <span class="title-pill">November 18, 2025</span>
+            </div>
+            <div class="subtitle">Aggregated overview by salesperson, administration and country</div>
+            <div class="exclusion-note">Note: All figures exclude GeoTech and TabAnker.</div>
+        </div>
+        <div class="meta">
+            <div class="meta-tag">Interactive Charts</div>
+            <div class="meta-tag">Sortable Table</div>
+            <div class="meta-tag">Per Country View</div>
+        </div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-row">
+        <div class="card"><div class="kpi-label">Total revenue</div><div class="kpi-value" id="kpi-total-revenue"></div></div>
+        <div class="card"><div class="kpi-label">Total tonnage</div><div class="kpi-value" id="kpi-total-tonnage"></div></div>
+        <div class="card"><div class="kpi-label">Total gross margin</div><div class="kpi-value" id="kpi-total-margin"></div></div>
+        <div class="card"><div class="kpi-label">Avg margin per ton</div><div class="kpi-value" id="kpi-margin-per-ton"></div></div>
+        <div class="card nl"><div class="kpi-label"><span class="country-flag">🇳🇱</span> Netherlands revenue</div><div class="kpi-value" id="kpi-nl-revenue"></div></div>
+        <div class="card de"><div class="kpi-label"><span class="country-flag">🇩🇪</span> Germany revenue</div><div class="kpi-value" id="kpi-de-revenue"></div></div>
+        <div class="card"><div class="kpi-label">Top salesperson</div><div class="kpi-value" id="kpi-top-salesperson"></div><div class="kpi-sub" id="kpi-top-salesperson-sub"></div></div>
+    </section>
+
+    <!-- Country Summary -->
+    <section class="layout">
+        <div>
+            <div class="section-title"><span class="country-flag">🇳🇱</span> Netherlands Summary (BV + SIP + WLDG)</div>
+            <div class="chart-wrapper" style="padding:16px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+                    <div><strong>Revenue:</strong> <span id="country-nl-revenue"></span></div>
+                    <div><strong>Tonnage:</strong> <span id="country-nl-tonnage"></span></div>
+                    <div><strong>Gross Margin:</strong> <span id="country-nl-margin"></span></div>
+                    <div><strong>Avg Margin/t:</strong> <span id="country-nl-mpt"></span></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="section-title"><span class="country-flag">🇩🇪</span> Germany Summary (GmbH)</div>
+            <div class="chart-wrapper" style="padding:16px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+                    <div><strong>Revenue:</strong> <span id="country-de-revenue"></span></div>
+                    <div><strong>Tonnage:</strong> <span id="country-de-tonnage"></span></div>
+                    <div><strong>Gross Margin:</strong> <span id="country-de-margin"></span></div>
+                    <div><strong>Avg Margin/t:</strong> <span id="country-de-mpt"></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="layout">
+        <div>
+            <div class="section-title"><i class="fas fa-chart-bar"></i> Revenue by salesperson</div>
+            <div class="chart-wrapper">
+                <canvas id="chartRevenueBySalesperson" height="200"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="section-title"><i class="fas fa-chart-area"></i> Revenue by administration</div>
+            <div class="chart-wrapper">
+                <canvas id="chartStackedRevenue" height="200"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="section-title"><i class="fas fa-chart-pie"></i> Revenue share by admin</div>
+            <div class="chart-wrapper">
+                <canvas id="chartRevenueShareByAdmin" height="200"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="section-title"><i class="fas fa-arrow-up"></i> Margin per ton by salesperson</div>
+            <div class="chart-wrapper">
+                <canvas id="chartMarginPerTonBySalesperson" height="200"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table -->
+    <section>
+        <div class="section-title"><i class="fas fa-table"></i> Detailed records</div>
+        <div class="table-wrapper">
+            <div class="table-controls" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+                <input id="search-input" class="search-input" type="search" placeholder="Search salesperson or admin..." />
+                <div class="pill-filter-group" id="admin-filters">
+                    <button class="pill-filter active" data-admin="ALL">All</button>
+                    <button class="pill-filter" data-admin="BV">BV</button>
+                    <button class="pill-filter" data-admin="GmbH">GmbH</button>
+                    <button class="pill-filter" data-admin="SIP">SIP</button>
+                    <button class="pill-filter" data-admin="WLDG">WLDG</button>
+                </div>
+            </div>
+            <div style="max-height:400px; overflow:auto;">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th data-key="salesPerson">Salesperson</th>
+                            <th data-key="administration">Administration</th>
+                            <th data-key="country">Country</th>
+                            <th data-key="revenue" style="text-align:right;">Revenue</th>
+                            <th data-key="tonnage" style="text-align:right;">Tonnage</th>
+                            <th data-key="margin" style="text-align:right;">Margin</th>
+                            <th data-key="marginPerTon" style="text-align:right;">Margin per ton</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    const salesData = [
+        { salesPerson:"Alexander Ehlert", administration:"BV", revenue:14660, tonnage:16, margin:4435, marginPerTon:282 },
+        { salesPerson:"Alexander Ehlert", administration:"GmbH", revenue:6901042, tonnage:7282, margin:2016858, marginPerTon:277 },
+        { salesPerson:"Alexander Ehlert", administration:"WLDG", revenue:253301, tonnage:165, margin:121678, marginPerTon:738 },
+        { salesPerson:"Iain Walker", administration:"BV", revenue:112841, tonnage:110, margin:25290, marginPerTon:231 },
+        { salesPerson:"Iain Walker", administration:"GmbH", revenue:3493029, tonnage:3923, margin:1186076, marginPerTon:303 },
+        { salesPerson:"Jan Markus", administration:"BV", revenue:1440, tonnage:2, margin:687, marginPerTon:456 },
+        { salesPerson:"Jan Markus", administration:"GmbH", revenue:377739, tonnage:452, margin:95658, marginPerTon:212 },
+        { salesPerson:"Kay Eckey", administration:"GmbH", revenue:123582, tonnage:118, margin:35542, marginPerTon:304 },
+        { salesPerson:"Kay Eckey", administration:"WLDG", revenue:34243, tonnage:21, margin:14181, marginPerTon:708 },
+        { salesPerson:"Luuk den Besten", administration:"BV", revenue:2428405, tonnage:2542, margin:570215, marginPerTon:225 },
+        { salesPerson:"Miles Anhalt", administration:"BV", revenue:10560, tonnage:10, margin:3686, marginPerTon:386 },
+        { salesPerson:"Miles Anhalt", administration:"GmbH", revenue:703064, tonnage:796, margin:204583, marginPerTon:258 },
+        { salesPerson:"Miles Anhalt", administration:"WLDG", revenue:3800, tonnage:6, margin:226, marginPerTon:43 },
+        { salesPerson:"Roger Himmel", administration:"BV", revenue:21701, tonnage:25, margin:21701, marginPerTon:873 },
+        { salesPerson:"Roger Himmel", administration:"GmbH", revenue:1302584, tonnage:1409, margin:381168, marginPerTon:271 },
+        { salesPerson:"Sebas Zonneveld", administration:"BV", revenue:511998, tonnage:550, margin:150685, marginPerTon:275 },
+        { salesPerson:"Sebas Zonneveld", administration:"GmbH", revenue:389, tonnage:1, margin:185, marginPerTon:453 },
+        { salesPerson:"Sebas Zonneveld", administration:"SIP", revenue:5574, tonnage:4, margin:1473, marginPerTon:418 },
+        { salesPerson:"Sebas Zonneveld", administration:"WLDG", revenue:381134, tonnage:361, margin:133031, marginPerTon:370 },
+        { salesPerson:"Thomas van der Velden", administration:"BV", revenue:1833752, tonnage:1627, margin:781653, marginPerTon:481 },
+        { salesPerson:"Thomas van der Velden", administration:"GmbH", revenue:1935, tonnage:3, margin:296, marginPerTon:118 },
+        { salesPerson:"Thomas van der Velden", administration:"SIP", revenue:39378, tonnage:23, margin:12714, marginPerTon:557 },
+        { salesPerson:"Thomas van der Velden", administration:"WLDG", revenue:1188663, tonnage:1183, margin:431191, marginPerTon:365 },
+        { salesPerson:"Wilco de Bakker", administration:"BV", revenue:7766580, tonnage:8275, margin:2270921, marginPerTon:275 },
+        { salesPerson:"Wilco de Bakker", administration:"SIP", revenue:4696324, tonnage:2971, margin:1235457, marginPerTon:416 },
+        { salesPerson:"Wilco de Bakker", administration:"WLDG", revenue:5867829, tonnage:5325, margin:2039400, marginPerTon:384 },
+        { salesPerson:"Willem Priem", administration:"BV", revenue:4083454, tonnage:4111, margin:1633087, marginPerTon:398 },
+        { salesPerson:"Willem Priem", administration:"GmbH", revenue:26242, tonnage:28, margin:8695, marginPerTon:322 },
+        { salesPerson:"Willem Priem", administration:"SIP", revenue:4665, tonnage:3, margin:1525, marginPerTon:589 },
+        { salesPerson:"Willem Priem", administration:"WLDG", revenue:676437, tonnage:655, margin:250389, marginPerTon:383 }
+    ];
+
+    // Add country field
+    salesData.forEach(r => {
+        r.country = r.administration === "GmbH" ? "Germany" : "Netherlands";
+    });
+
+    function formatEuro(v) { return "€ " + Number(v).toLocaleString("nl-NL"); }
+    function formatTon(v) { return Number(v).toLocaleString("nl-NL") + " t"; }
+    function formatEuroPerTon(v) { return "€ " + Math.round(v).toLocaleString("nl-NL") + " / t"; }
+
+    function computeAggregations(data) {
+        let totalRevenue = 0, totalTonnage = 0, totalMargin = 0;
+        let nl = {revenue:0, tonnage:0, margin:0}, de = {revenue:0, tonnage:0, margin:0};
+        const perSalesperson = {};
+        const perAdmin = {};
+
+        for (const r of data) {
+            totalRevenue += r.revenue;
+            totalTonnage += r.tonnage;
+            totalMargin += r.margin;
+
+            if (r.country === "Netherlands") {
+                nl.revenue += r.revenue; nl.tonnage += r.tonnage; nl.margin += r.margin;
+            } else {
+                de.revenue += r.revenue; de.tonnage += r.tonnage; de.margin += r.margin;
+            }
+
+            if (!perSalesperson[r.salesPerson]) perSalesperson[r.salesPerson] = { revenue:0, tonnage:0, margin:0 };
+            perSalesperson[r.salesPerson].revenue += r.revenue;
+            perSalesperson[r.salesPerson].tonnage += r.tonnage;
+            perSalesperson[r.salesPerson].margin += r.margin;
+
+            if (!perAdmin[r.administration]) perAdmin[r.administration] = { revenue:0 };
+            perAdmin[r.administration].revenue += r.revenue;
+        }
+
+        let top = null, topRevenue = 0;
+        for (const [name, agg] of Object.entries(perSalesperson)) {
+            if (agg.revenue > topRevenue) { topRevenue = agg.revenue; top = name; }
+        }
+
+        return {
+            totalRevenue, totalTonnage, totalMargin,
+            avgMarginPerTon: totalMargin / totalTonnage,
+            nl, de,
+            perSalesperson, perAdmin,
+            topSalesperson: top, topSalespersonRevenue: topRevenue
+        };
+    }
+
+    function renderKpis(a) {
+        document.getElementById("kpi-total-revenue").textContent = formatEuro(a.totalRevenue);
+        document.getElementById("kpi-total-tonnage").textContent = formatTon(a.totalTonnage);
+        document.getElementById("kpi-total-margin").textContent = formatEuro(a.totalMargin);
+        document.getElementById("kpi-margin-per-ton").textContent = formatEuroPerTon(a.avgMarginPerTon);
+        document.getElementById("kpi-nl-revenue").textContent = formatEuro(a.nl.revenue);
+        document.getElementById("kpi-de-revenue").textContent = formatEuro(a.de.revenue);
+        document.getElementById("kpi-top-salesperson").textContent = a.topSalesperson || "N/A";
+        document.getElementById("kpi-top-salesperson-sub").textContent = a.topSalesperson ? formatEuro(a.topSalespersonRevenue) : "";
+    }
+
+    function renderCountrySummary(a) {
+        document.getElementById("country-nl-revenue").textContent = formatEuro(a.nl.revenue);
+        document.getElementById("country-nl-tonnage").textContent = formatTon(a.nl.tonnage);
+        document.getElementById("country-nl-margin").textContent = formatEuro(a.nl.margin);
+        document.getElementById("country-nl-mpt").textContent = formatEuroPerTon(a.nl.margin / a.nl.tonnage);
+
+        document.getElementById("country-de-revenue").textContent = formatEuro(a.de.revenue);
+        document.getElementById("country-de-tonnage").textContent = formatTon(a.de.tonnage);
+        document.getElementById("country-de-margin").textContent = formatEuro(a.de.margin);
+        document.getElementById("country-de-mpt").textContent = formatEuroPerTon(a.de.margin / a.de.tonnage);
+    }
+
+    // Rest of chart & table functions remain the same (only small adjustment for country column)
+    function renderTableRows(data, adminFilter, searchQuery, sortState) {
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+        const q = searchQuery ? searchQuery.toLowerCase() : "";
+        let rows = data.filter(r => {
+            if (adminFilter !== "ALL" && r.administration !== adminFilter) return false;
+            if (!q) return true;
+            return (r.salesPerson + r.administration + r.country).toLowerCase().includes(q);
+        });
+
+        if (sortState.key) {
+            const {key, direction} = sortState;
+            rows.sort((a,b) => {
+                const va = a[key], vb = b[key];
+                if (typeof va === "number") return direction === "asc" ? va-vb : vb-va;
+                return direction === "asc" ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+            });
+        }
+
+        for (const r of rows) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${r.salesPerson}</td>
+                <td><span class="badge-admin ${r.administration}">${r.administration}</span></td>
+                <td>${r.country === "Germany" ? '🇩🇪 Germany' : '🇳🇱 Netherlands'}</td>
+                <td style="text-align:right;">${formatEuro(r.revenue).replace("€ ","")}</td>
+                <td style="text-align:right;">${r.tonnage.toLocaleString("nl-NL")}</td>
+                <td style="text-align:right;">${formatEuro(r.margin).replace("€ ","")}</td>
+                <td style="text-align:right;">${r.marginPerTon}</td>
+            `;
+            tbody.appendChild(tr);
+        }
+    }
+
+    // Keep existing chart creation code (unchanged except using the same aggs)
+    function createCharts(a, data) {
+        // ... (exact same chart code as before - omitted for brevity, just copy-paste from your original)
+        // Only change: use same persons/admin ordering logic
+        const ctx1 = document.getElementById("chartRevenueBySalesperson").getContext("2d");
+        const ctx2 = document.getElementById("chartStackedRevenue").getContext("2d");
+        const ctx3 = document.getElementById("chartRevenueShareByAdmin").getContext("2d");
+        const ctx4 = document.getElementById("chartMarginPerTonBySalesperson").getContext("2d");
+
+        const persons = Object.keys(a.perSalesperson)
+            .sort((x,y) => a.perSalesperson[y].revenue - a.perSalesperson[x].revenue);
+
+        const baseColors = ["#38bdf8","#4ade80","#f97316","#a855f7","#facc15","#fb7185","#22c55e","#f59e0b","#6366f1","#ec4899","#0ea5e9"];
+        const rgba = (hex, alpha) => {
+            const v = parseInt(hex.slice(1),16);
+            return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
+        };
+
+        // (Insert your full original chart creation code here - it's unchanged)
+        // For brevity, I'm showing only that it remains identical
+        // You can copy the entire createCharts function from your original HTML
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const aggs = computeAggregations(salesData);
+        renderKpis(aggs);
+        renderCountrySummary(aggs);
+        createCharts(aggs, salesData);
+
+        let adminFilter = "ALL";
+        let searchQuery = "";
+        let sortState = {key: null, direction: "asc"};
+
+        renderTableRows(salesData, adminFilter, searchQuery, sortState);
+
+        document.getElementById("search-input").addEventListener("input", e => {
+            searchQuery = e.target.value;
+            renderTableRows(salesData, adminFilter, searchQuery, sortState);
+        });
+
+        document.querySelectorAll("#admin-filters .pill-filter").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll("#admin-filters .pill-filter").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                adminFilter = btn.dataset.admin;
+                renderTableRows(salesData, adminFilter, searchQuery, sortState);
+            });
+        });
+
+        document.querySelectorAll("#data-table thead th[data-key]").forEach(th => {
+            th.style.cursor = "pointer";
+            th.addEventListener("click", () => {
+                const key = th.dataset.key;
+                if (sortState.key === key) sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+                else { sortState.key = key; sortState.direction = "asc"; }
+                renderTableRows(salesData, adminFilter, searchQuery, sortState);
+            });
+        });
+    });
+</script>
+<script>
+// Paste your original createCharts function here (the long one from your first version)
+// It works unchanged - just needs to be inside the script tag
+// (I omitted it above to keep response readable, but it must be included)
+function createCharts(a, data) {
+    function applyBarFixes(opts) {
+        opts.elements = { bar: { barThickness: 22, maxBarThickness: 26, hoverBorderWidth: 2 } };
+        opts.interaction = { mode: "nearest", axis: "x", intersect: false };
+        return opts;
+    }
+    const ctx1 = document.getElementById("chartRevenueBySalesperson").getContext("2d");
+    const ctx2 = document.getElementById("chartStackedRevenue").getContext("2d");
+    const ctx3 = document.getElementById("chartRevenueShareByAdmin").getContext("2d");
+    const ctx4 = document.getElementById("chartMarginPerTonBySalesperson").getContext("2d");
+    const persons = Object.keys(a.perSalesperson)
+        .sort((x,y)=>a.perSalesperson[y].revenue - a.perSalesperson[x].revenue);
+    const baseColors = ["#38bdf8","#4ade80","#f97316","#a855f7","#facc15","#fb7185","#22c55e","#f59e0b","#6366f1","#ec4899","#0ea5e9"];
+    const rgba = (hex, alpha) => {
+        const v = parseInt(hex.slice(1),16);
+        return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
+    };
+    const bgBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.4));
+    const borderBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.9));
+
+    new Chart(ctx1, { type:"bar", data:{ labels:persons, datasets:[{ label:"Revenue", data:persons.map(n=>a.perSalesperson[n].revenue), backgroundColor:bgBars, borderColor:borderBars, borderWidth:1, borderRadius:8, borderSkipped:false }] },
+        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuro(c.parsed.y) } } },
+        scales:{ x:{ ticks:{ font:{size:11}, color:"#9ca3af" }, grid:{display:false} }, y:{ ticks:{ font:{size:10}, color:"#6b7280" }, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
+
+    const admins = ["BV","GmbH","SIP","WLDG"];
+    const datasets2 = admins.map((ad,i)=>{
+        return { label:ad, data:persons.map(p=> data.filter(d=>d.salesPerson===p && d.administration===ad).reduce((s,x)=>s+x.revenue,0)),
+            backgroundColor:rgba(baseColors[i%baseColors.length],0.4), borderColor:rgba(baseColors[i%baseColors.length],0.9), borderWidth:1, borderRadius:6, borderSkipped:false };
+    });
+    new Chart(ctx2, { type:"bar", data:{ labels:persons, datasets:datasets2 },
+        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{font:{size:11},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>" "+c.dataset.label+": "+formatEuro(c.parsed.y) } } },
+        scales:{ x:{ stacked:true, ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ stacked:true, ticks:{font:{size:10},color:"#6b7280"}, grille:{color:"rgba(55,65,81,0.5)"} } } }) });
+
+    new Chart(ctx3, { type:"doughnut", data:{ labels:admins, datasets:[{ data:admins.map(x=>a.perAdmin[x]?.revenue || 0), backgroundColor:admins.map((_,i)=>rgba(baseColors[i%baseColors.length],0.8)), borderColor:"#020617", borderWidth:1 }] },
+        options:{ responsive:true, maintainAspectRatio:false, cutout:"58%", plugins:{ legend:{ position:"bottom", labels:{font:{size:10},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>{ const v=c.parsed; const tot=c.dataset.data.reduce((x,y)=>x+y,0); const pct=(v/tot)*100; return " "+c.label+": "+pct.toFixed(1)+"% ("+formatEuro(v)+")"; } } } } } });
+
+    new Chart(ctx4, { type:"bar", data:{ labels:persons, datasets:[{ label:"Margin per ton", data:persons.map(p=>a.perSalesperson[p].margin/a.perSalesperson[p].tonnage), backgroundColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.4)), borderColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.9)), borderWidth:1, borderRadius:8, borderSkipped:false }] },
+        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuroPerTon(c.parsed.y) } } },
+        scales:{ x:{ ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ ticks:{font:{size:10},color:"#6b7280"}, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
+}
+</script>
+</body>
+</html>
