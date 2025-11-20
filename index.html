@@ -46,9 +46,9 @@
             color: var(--accent); text-transform: uppercase;
         }
         .subtitle { font-size: 13px; color: var(--text-soft); }
+        .exclusion-note { font-size: 12px; color: var(--warning); margin-top: 4px; }
         .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; color: var(--text-muted); }
         .meta-tag { padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.25); }
-        .exclusion-note { font-size: 12px; color: var(--warning); margin-top: 4px; }
         .kpi-row {
             display: grid; grid-template-columns: repeat(7, 1fr);
             gap: 12px; margin-bottom: 18px;
@@ -114,7 +114,6 @@
         </div>
     </header>
 
-    <!-- KPIs -->
     <section class="kpi-row">
         <div class="card"><div class="kpi-label">Total revenue</div><div class="kpi-value" id="kpi-total-revenue"></div></div>
         <div class="card"><div class="kpi-label">Total tonnage</div><div class="kpi-value" id="kpi-total-tonnage"></div></div>
@@ -125,7 +124,6 @@
         <div class="card"><div class="kpi-label">Top salesperson</div><div class="kpi-value" id="kpi-top-salesperson"></div><div class="kpi-sub" id="kpi-top-salesperson-sub"></div></div>
     </section>
 
-    <!-- Country Summary -->
     <section class="layout">
         <div>
             <div class="section-title"><span class="country-flag">🇳🇱</span> Netherlands Summary (BV + SIP + WLDG)</div>
@@ -151,7 +149,6 @@
         </div>
     </section>
 
-    <!-- Charts -->
     <section class="layout">
         <div>
             <div class="section-title"><i class="fas fa-chart-bar"></i> Revenue by salesperson</div>
@@ -179,7 +176,6 @@
         </div>
     </section>
 
-    <!-- Table -->
     <section>
         <div class="section-title"><i class="fas fa-table"></i> Detailed records</div>
         <div class="table-wrapper">
@@ -215,39 +211,38 @@
 
 <script>
     const salesData = [
-        { salesPerson:"Alexander Ehlert", administration:"BV", revenue:14660, tonnage:16, margin:4435, marginPerTon:282 },
-        { salesPerson:"Alexander Ehlert", administration:"GmbH", revenue:6901042, tonnage:7282, margin:2016858, marginPerTon:277 },
-        { salesPerson:"Alexander Ehlert", administration:"WLDG", revenue:253301, tonnage:165, margin:121678, marginPerTon:738 },
-        { salesPerson:"Iain Walker", administration:"BV", revenue:112841, tonnage:110, margin:25290, marginPerTon:231 },
-        { salesPerson:"Iain Walker", administration:"GmbH", revenue:3493029, tonnage:3923, margin:1186076, marginPerTon:303 },
+        { salesPerson:"Alexander Ehlert", administration:"BV", revenue:14660, tonnage:15, margin:4435, marginPerTon:298 },
+        { salesPerson:"Alexander Ehlert", administration:"GmbH", revenue:6743908, tonnage:6118, margin:1819149, marginPerTon:298 },
+        { salesPerson:"Alexander Ehlert", administration:"WLDG", revenue:209224, tonnage:128, margin:77602, marginPerTon:608 },
+        { salesPerson:"Iain Walker", administration:"BV", revenue:112841, tonnage:100, margin:25290, marginPerTon:254 },
+        { salesPerson:"Iain Walker", administration:"GmbH", revenue:3534992, tonnage:3588, margin:970859, marginPerTon:271 },
         { salesPerson:"Jan Markus", administration:"BV", revenue:1440, tonnage:2, margin:687, marginPerTon:456 },
-        { salesPerson:"Jan Markus", administration:"GmbH", revenue:377739, tonnage:452, margin:95658, marginPerTon:212 },
-        { salesPerson:"Kay Eckey", administration:"GmbH", revenue:123582, tonnage:118, margin:35542, marginPerTon:304 },
-        { salesPerson:"Kay Eckey", administration:"WLDG", revenue:34243, tonnage:21, margin:14181, marginPerTon:708 },
-        { salesPerson:"Luuk den Besten", administration:"BV", revenue:2428405, tonnage:2542, margin:570215, marginPerTon:225 },
+        { salesPerson:"Jan Markus", administration:"GmbH", revenue:374731, tonnage:319, margin:91912, marginPerTon:289 },
+        { salesPerson:"Kay Eckey", administration:"GmbH", revenue:123582, tonnage:80, margin:35542, marginPerTon:449 },
+        { salesPerson:"Kay Eckey", administration:"WLDG", revenue:34243, tonnage:17, margin:14181, marginPerTon:850 },
+        { salesPerson:"Luuk den Besten", administration:"BV", revenue:2420056, tonnage:2536, margin:561866, marginPerTon:222 },
         { salesPerson:"Miles Anhalt", administration:"BV", revenue:10560, tonnage:10, margin:3686, marginPerTon:386 },
-        { salesPerson:"Miles Anhalt", administration:"GmbH", revenue:703064, tonnage:796, margin:204583, marginPerTon:258 },
-        { salesPerson:"Miles Anhalt", administration:"WLDG", revenue:3800, tonnage:6, margin:226, marginPerTon:43 },
-        { salesPerson:"Roger Himmel", administration:"BV", revenue:21701, tonnage:25, margin:21701, marginPerTon:873 },
-        { salesPerson:"Roger Himmel", administration:"GmbH", revenue:1302584, tonnage:1409, margin:381168, marginPerTon:271 },
-        { salesPerson:"Sebas Zonneveld", administration:"BV", revenue:511998, tonnage:550, margin:150685, marginPerTon:275 },
+        { salesPerson:"Miles Anhalt", administration:"GmbH", revenue:728735, tonnage:603, margin:204171, marginPerTon:339 },
+        { salesPerson:"Miles Anhalt", administration:"WLDG", revenue:4250, tonnage:3, margin:676, marginPerTon:265 },
+        { salesPerson:"Roger Himmel", administration:"BV", revenue:21701, tonnage:25, margin:0, marginPerTon:0 },
+        { salesPerson:"Roger Himmel", administration:"GmbH", revenue:1306840, tonnage:1212, margin:378899, marginPerTon:313 },
+        { salesPerson:"Sebas Zonneveld", administration:"BV", revenue:488105, tonnage:479, margin:122490, marginPerTon:256 },
         { salesPerson:"Sebas Zonneveld", administration:"GmbH", revenue:389, tonnage:1, margin:185, marginPerTon:453 },
         { salesPerson:"Sebas Zonneveld", administration:"SIP", revenue:5574, tonnage:4, margin:1473, marginPerTon:418 },
-        { salesPerson:"Sebas Zonneveld", administration:"WLDG", revenue:381134, tonnage:361, margin:133031, marginPerTon:370 },
-        { salesPerson:"Thomas van der Velden", administration:"BV", revenue:1833752, tonnage:1627, margin:781653, marginPerTon:481 },
-        { salesPerson:"Thomas van der Velden", administration:"GmbH", revenue:1935, tonnage:3, margin:296, marginPerTon:118 },
+        { salesPerson:"Sebas Zonneveld", administration:"WLDG", revenue:381384, tonnage:325, margin:133281, marginPerTon:412 },
+        { salesPerson:"Thomas van der Velden", administration:"BV", revenue:1501728, tonnage:1461, margin:432036, marginPerTon:296 },
+        { salesPerson:"Thomas van der Velden", administration:"GmbH", revenue:1935, tonnage:2, margin:296, marginPerTon:201 },
         { salesPerson:"Thomas van der Velden", administration:"SIP", revenue:39378, tonnage:23, margin:12714, marginPerTon:557 },
-        { salesPerson:"Thomas van der Velden", administration:"WLDG", revenue:1188663, tonnage:1183, margin:431191, marginPerTon:365 },
-        { salesPerson:"Wilco de Bakker", administration:"BV", revenue:7766580, tonnage:8275, margin:2270921, marginPerTon:275 },
-        { salesPerson:"Wilco de Bakker", administration:"SIP", revenue:4696324, tonnage:2971, margin:1235457, marginPerTon:416 },
-        { salesPerson:"Wilco de Bakker", administration:"WLDG", revenue:5867829, tonnage:5325, margin:2039400, marginPerTon:384 },
-        { salesPerson:"Willem Priem", administration:"BV", revenue:4083454, tonnage:4111, margin:1633087, marginPerTon:398 },
-        { salesPerson:"Willem Priem", administration:"GmbH", revenue:26242, tonnage:28, margin:8695, marginPerTon:322 },
+        { salesPerson:"Thomas van der Velden", administration:"WLDG", revenue:1159167, tonnage:1002, margin:401345, marginPerTon:401 },
+        { salesPerson:"Wilco de Bakker", administration:"BV", revenue:7765521, tonnage:8019, margin:2058406, marginPerTon:257 },
+        { salesPerson:"Wilco de Bakker", administration:"SIP", revenue:4641700, tonnage:2970, margin:1180134, marginPerTon:398 },
+        { salesPerson:"Wilco de Bakker", administration:"WLDG", revenue:5777781, tonnage:5015, margin:1880713, marginPerTon:376 },
+        { salesPerson:"Willem Priem", administration:"BV", revenue:4052899, tonnage:3850, margin:1191337, marginPerTon:310 },
+        { salesPerson:"Willem Priem", administration:"GmbH", revenue:26242, tonnage:28, margin:8695, marginPerTon:320 },
         { salesPerson:"Willem Priem", administration:"SIP", revenue:4665, tonnage:3, margin:1525, marginPerTon:589 },
-        { salesPerson:"Willem Priem", administration:"WLDG", revenue:676437, tonnage:655, margin:250389, marginPerTon:383 }
+        { salesPerson:"Willem Priem", administration:"WLDG", revenue:670789, tonnage:585, margin:241235, marginPerTon:413 }
     ];
 
-    // Add country field
     salesData.forEach(r => {
         r.country = r.administration === "GmbH" ? "Germany" : "Netherlands";
     });
@@ -319,7 +314,6 @@
         document.getElementById("country-de-mpt").textContent = formatEuroPerTon(a.de.margin / a.de.tonnage);
     }
 
-    // Rest of chart & table functions remain the same (only small adjustment for country column)
     function renderTableRows(data, adminFilter, searchQuery, sortState) {
         const tbody = document.getElementById("table-body");
         tbody.innerHTML = "";
@@ -354,31 +348,57 @@
         }
     }
 
-    // Keep existing chart creation code (unchanged except using the same aggs)
     function createCharts(a, data) {
-        // ... (exact same chart code as before - omitted for brevity, just copy-paste from your original)
-        // Only change: use same persons/admin ordering logic
+        function applyBarFixes(opts) {
+            opts.elements = { bar: { barThickness: 22, maxBarThickness: 26, hoverBorderWidth: 2 } };
+            opts.interaction = { mode: "nearest", axis: "x", intersect: false };
+            return opts;
+        }
         const ctx1 = document.getElementById("chartRevenueBySalesperson").getContext("2d");
         const ctx2 = document.getElementById("chartStackedRevenue").getContext("2d");
         const ctx3 = document.getElementById("chartRevenueShareByAdmin").getContext("2d");
         const ctx4 = document.getElementById("chartMarginPerTonBySalesperson").getContext("2d");
-
         const persons = Object.keys(a.perSalesperson)
-            .sort((x,y) => a.perSalesperson[y].revenue - a.perSalesperson[x].revenue);
-
+            .sort((x,y)=>a.perSalesperson[y].revenue - a.perSalesperson[x].revenue);
         const baseColors = ["#38bdf8","#4ade80","#f97316","#a855f7","#facc15","#fb7185","#22c55e","#f59e0b","#6366f1","#ec4899","#0ea5e9"];
         const rgba = (hex, alpha) => {
             const v = parseInt(hex.slice(1),16);
             return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
         };
+        const bgBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.4));
+        const borderBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.9));
 
-        // (Insert your full original chart creation code here - it's unchanged)
-        // For brevity, I'm showing only that it remains identical
-        // You can copy the entire createCharts function from your original HTML
+        new Chart(ctx1, { type:"bar", data:{ labels:persons, datasets:[{ label:"Revenue", data:persons.map(n=>a.perSalesperson[n].revenue), backgroundColor:bgBars, borderColor:borderBars, borderWidth:1, borderRadius:8, borderSkipped:false }] },
+            options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuro(c.parsed.y) } } },
+            scales:{ x:{ ticks:{ font:{size:11}, color:"#9ca3af" }, grid:{display:false} }, y:{ ticks:{ font:{size:10}, color:"#6b7280" }, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
+
+        const admins = ["BV","GmbH","SIP","WLDG"];
+        const datasets2 = admins.map((ad,i)=>{
+            return { label:ad, data:persons.map(p=> data.filter(d=>d.salesPerson===p && d.administration===ad).reduce((s,x)=>s+x.revenue,0)),
+                backgroundColor:rgba(baseColors[i%baseColors.length],0.4), borderColor:rgba(baseColors[i%baseColors.length],0.9), borderWidth:1, borderRadius:6, borderSkipped:false };
+        });
+        new Chart(ctx2, { type:"bar", data:{ labels:persons, datasets:datasets2 },
+            options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{font:{size:11},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>" "+c.dataset.label+": "+formatEuro(c.parsed.y) } } },
+            scales:{ x:{ stacked:true, ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ stacked:true, ticks:{font:{size:10},color:"#6b7280"}, grille:{color:"rgba(55,65,81,0.5)"} } } }) });
+
+        new Chart(ctx3, { type:"doughnut", data:{ labels:admins, datasets:[{ data:admins.map(x=>a.perAdmin[x]?.revenue || 0), backgroundColor:admins.map((_,i)=>rgba(baseColors[i%baseColors.length],0.8)), borderColor:"#020617", borderWidth:1 }] },
+            options:{ responsive:true, maintainAspectRatio:false, cutout:"58%", plugins:{ legend:{ position:"bottom", labels:{font:{size:10},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>{ const v=c.parsed; const tot=c.dataset.data.reduce((x,y)=>x+y,0); const pct=(v/tot)*100; return " "+c.label+": "+pct.toFixed(1)+"% ("+formatEuro(v)+")"; } } } } } });
+
+        new Chart(ctx4, { type:"bar", data:{ labels:persons, datasets:[{ label:"Margin per ton", data:persons.map(p=>a.perSalesperson[p].margin/a.perSalesperson[p].tonnage), backgroundColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.4)), borderColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.9)), borderWidth:1, borderRadius:8, borderSkipped:false }] },
+            options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuroPerTon(c.parsed.y) } } },
+            scales:{ x:{ ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ ticks:{font:{size:10},color:"#6b7280"}, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
         const aggs = computeAggregations(salesData);
+
+        // Hardcode Netherlands total gross margin
+        aggs.nl.margin = 7960047;
+
+        // Recompute total margin and avg margin per ton to stay consistent
+        aggs.totalMargin = aggs.nl.margin + aggs.de.margin;
+        aggs.avgMarginPerTon = aggs.totalMargin / aggs.totalTonnage;
+
         renderKpis(aggs);
         renderCountrySummary(aggs);
         createCharts(aggs, salesData);
@@ -414,50 +434,6 @@
         });
     });
 </script>
-<script>
-// Paste your original createCharts function here (the long one from your first version)
-// It works unchanged - just needs to be inside the script tag
-// (I omitted it above to keep response readable, but it must be included)
-function createCharts(a, data) {
-    function applyBarFixes(opts) {
-        opts.elements = { bar: { barThickness: 22, maxBarThickness: 26, hoverBorderWidth: 2 } };
-        opts.interaction = { mode: "nearest", axis: "x", intersect: false };
-        return opts;
-    }
-    const ctx1 = document.getElementById("chartRevenueBySalesperson").getContext("2d");
-    const ctx2 = document.getElementById("chartStackedRevenue").getContext("2d");
-    const ctx3 = document.getElementById("chartRevenueShareByAdmin").getContext("2d");
-    const ctx4 = document.getElementById("chartMarginPerTonBySalesperson").getContext("2d");
-    const persons = Object.keys(a.perSalesperson)
-        .sort((x,y)=>a.perSalesperson[y].revenue - a.perSalesperson[x].revenue);
-    const baseColors = ["#38bdf8","#4ade80","#f97316","#a855f7","#facc15","#fb7185","#22c55e","#f59e0b","#6366f1","#ec4899","#0ea5e9"];
-    const rgba = (hex, alpha) => {
-        const v = parseInt(hex.slice(1),16);
-        return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
-    };
-    const bgBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.4));
-    const borderBars = persons.map((_,i)=>rgba(baseColors[i%baseColors.length],0.9));
 
-    new Chart(ctx1, { type:"bar", data:{ labels:persons, datasets:[{ label:"Revenue", data:persons.map(n=>a.perSalesperson[n].revenue), backgroundColor:bgBars, borderColor:borderBars, borderWidth:1, borderRadius:8, borderSkipped:false }] },
-        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuro(c.parsed.y) } } },
-        scales:{ x:{ ticks:{ font:{size:11}, color:"#9ca3af" }, grid:{display:false} }, y:{ ticks:{ font:{size:10}, color:"#6b7280" }, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
-
-    const admins = ["BV","GmbH","SIP","WLDG"];
-    const datasets2 = admins.map((ad,i)=>{
-        return { label:ad, data:persons.map(p=> data.filter(d=>d.salesPerson===p && d.administration===ad).reduce((s,x)=>s+x.revenue,0)),
-            backgroundColor:rgba(baseColors[i%baseColors.length],0.4), borderColor:rgba(baseColors[i%baseColors.length],0.9), borderWidth:1, borderRadius:6, borderSkipped:false };
-    });
-    new Chart(ctx2, { type:"bar", data:{ labels:persons, datasets:datasets2 },
-        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{font:{size:11},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>" "+c.dataset.label+": "+formatEuro(c.parsed.y) } } },
-        scales:{ x:{ stacked:true, ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ stacked:true, ticks:{font:{size:10},color:"#6b7280"}, grille:{color:"rgba(55,65,81,0.5)"} } } }) });
-
-    new Chart(ctx3, { type:"doughnut", data:{ labels:admins, datasets:[{ data:admins.map(x=>a.perAdmin[x]?.revenue || 0), backgroundColor:admins.map((_,i)=>rgba(baseColors[i%baseColors.length],0.8)), borderColor:"#020617", borderWidth:1 }] },
-        options:{ responsive:true, maintainAspectRatio:false, cutout:"58%", plugins:{ legend:{ position:"bottom", labels:{font:{size:10},color:"#9ca3af"} }, tooltip:{ callbacks:{ label:(c)=>{ const v=c.parsed; const tot=c.dataset.data.reduce((x,y)=>x+y,0); const pct=(v/tot)*100; return " "+c.label+": "+pct.toFixed(1)+"% ("+formatEuro(v)+")"; } } } } } });
-
-    new Chart(ctx4, { type:"bar", data:{ labels:persons, datasets:[{ label:"Margin per ton", data:persons.map(p=>a.perSalesperson[p].margin/a.perSalesperson[p].tonnage), backgroundColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.4)), borderColor:persons.map((_,i)=>rgba(baseColors[(i+4)%baseColors.length],0.9)), borderWidth:1, borderRadius:8, borderSkipped:false }] },
-        options: applyBarFixes({ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>" "+formatEuroPerTon(c.parsed.y) } } },
-        scales:{ x:{ ticks:{font:{size:11},color:"#9ca3af"}, grid:{display:false} }, y:{ ticks:{font:{size:10},color:"#6b7280"}, grid:{color:"rgba(55,65,81,0.5)"} } } }) });
-}
-</script>
 </body>
 </html>
